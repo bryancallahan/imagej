@@ -31,6 +31,16 @@
 
 package imagej;
 
+import imagej.data.Dataset;
+import imagej.data.display.DataView;
+import imagej.data.display.ImageDisplay;
+import imagej.data.display.OverlayView;
+import imagej.data.overlay.EllipseOverlay;
+import imagej.data.overlay.RectangleOverlay;
+import imagej.plugins.commands.assign.FillDataValues;
+
+import java.util.Collections;
+
 /**
  * Launches ImageJ.
  * 
@@ -48,8 +58,7 @@ public final class Main {
 	 * This method is provided merely for convenience. If you do not want to
 	 * display a user interface, construct the ImageJ instance directly instead:
 	 * </p>
-	 * {@code
-	 * final ImageJ ij = new ImageJ();<br/>
+	 * {@code final ImageJ ij = new ImageJ();<br/>
 	 * ij.console().processArgs(args); // if you want to pass any arguments
 	 * }
 	 * 
@@ -68,8 +77,35 @@ public final class Main {
 		return ij;
 	}
 
-	public static void main(final String... args) {
-		launch(args);
+	public static void main(final String... args) throws Exception {
+		final ImageJ ij = launch(args);
+
+		// load the dataset
+		final Dataset dataset = ij.dataset().open("/Users/curtis/data/toucan.png");
+		
+		// create a display
+		final ImageDisplay imageDisplay =
+			(ImageDisplay) ij.display().createDisplay(dataset);
+		ij.display().setActiveDisplay(imageDisplay);
+
+		// add an overlay
+		final EllipseOverlay overlay = new EllipseOverlay(ij.getContext());
+		overlay.setOrigin(53, 0);
+		overlay.setOrigin(75, 1);
+		overlay.setRadius(52, 0);
+		overlay.setRadius(35, 1);
+		ij.log().info("image display = " + imageDisplay);
+		ij.overlay().addOverlays(imageDisplay, Collections.singletonList(overlay));
+
+		// select the overlay...
+		for (final DataView view : imageDisplay) {
+			if (view instanceof OverlayView) {
+				view.setSelected(true);
+				break;
+			}
+		}
+
+		ij.command().run(FillDataValues.class, true);
 	}
 
 }

@@ -138,7 +138,7 @@ public final class DefaultOverlayService extends AbstractService implements
 	/** Adds the list of {@link Overlay}s to the given {@link ImageDisplay}. */
 	@Override
 	public void addOverlays(final ImageDisplay display,
-		final List<Overlay> overlays)
+		final List<? extends Overlay> overlays)
 	{
 		for (final Overlay overlay : overlays) {
 			display.display(overlay);
