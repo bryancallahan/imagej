@@ -22,8 +22,8 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ij-minimaven</artifactId>
-			<version>${project.version}</version>
+			<artifactId>minimaven</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
