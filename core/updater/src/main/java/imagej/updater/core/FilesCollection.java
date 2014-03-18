@@ -88,6 +88,7 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 	protected List<Conflict> conflicts = new ArrayList<Conflict>();
 
 	private Map<String, UpdateSite> updateSites;
+	private boolean updateSitesChanged = false;
 
 	private DependencyAnalyzer dependencyAnalyzer;
 	public final Util util;
@@ -127,6 +128,7 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 
 	public UpdateSite addUpdateSite(UpdateSite site) {
 		addUpdateSite(site.getName(), site);
+		setUpdateSitesChanged(true);
 		return site;
 	}
 
@@ -169,6 +171,7 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 			}
 		}
 		updateSites.remove(name);
+		setUpdateSitesChanged(true);
 
 		// re-read the overridden sites
 		// no need to sort, the XMLFileReader will only override data from higher-ranked sites
@@ -385,6 +388,7 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 		if (out.exists() && !out.delete())
 			out.renameTo(prefix(Util.XML_COMPRESSED + ".backup"));
 		tmp.renameTo(out);
+		setUpdateSitesChanged(false);
 	}
 
 	public interface Filter {
@@ -1136,5 +1140,13 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 			}
 		}
 		return protocols;
+	}
+
+	public boolean hasUpdateSitesChanges() {
+		return updateSitesChanged;
+	}
+
+	public void setUpdateSitesChanged(boolean updateSitesChanged) {
+		this.updateSitesChanged = updateSitesChanged;
 	}
 }
