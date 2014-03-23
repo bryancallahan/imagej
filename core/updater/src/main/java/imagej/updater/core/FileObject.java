@@ -167,7 +167,7 @@ public class FileObject {
 		}
 	}
 
-	protected Map<String, FileObject> overriddenUpdateSites = new HashMap<String, FileObject>();
+	protected Map<String, FileObject> overriddenUpdateSites = new LinkedHashMap<String, FileObject>();
 	private Status status;
 	private Action action;
 	public String updateSite, originalUpdateSite, filename, description;

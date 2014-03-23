@@ -162,12 +162,22 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 		Set<String> toReRead = new HashSet<String>();
 		for (final FileObject file : forUpdateSite(name)) {
 			toReRead.addAll(file.overriddenUpdateSites.keySet());
-			if (file.getStatus() == Status.NOT_INSTALLED) {
+			switch (file.getStatus()) {
+			case NEW:
+			case NOT_INSTALLED:
+			case OBSOLETE_UNINSTALLED:
 				remove(file);
-			}
-			else {
-				file.setStatus(Status.LOCAL_ONLY);
-				file.updateSite = null;
+				break;
+			case LOCAL_ONLY:
+				error;
+				break;
+			case MODIFIED:
+			case OBSOLETE:
+			case OBSOLETE_MODIFIED:
+			case UPDATEABLE:
+			case INSTALLED:
+				file.stopOverriding(file.updateSite);
+				break;
 			}
 		}
 		updateSites.remove(name);
