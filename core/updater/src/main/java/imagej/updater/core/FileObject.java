@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -257,6 +256,29 @@ public class FileObject {
 
 	public boolean overridesOtherUpdateSite() {
 		return !overriddenUpdateSites.isEmpty();
+	}
+
+	public void removeFromUpdateSite(final String updateSite, final FilesCollection files) {
+		if (!updateSite.equals(this.updateSite)) return;
+		switch (status) {
+		case LOCAL_ONLY:
+			return;
+		case NEW:
+		case NOT_INSTALLED:
+		case OBSOLETE_UNINSTALLED:
+			files.remove(this);
+			break;
+		case MODIFIED:
+		case OBSOLETE:
+		case OBSOLETE_MODIFIED:
+		case UPDATEABLE:
+		case INSTALLED:
+			break;
+		default:
+			throw new RuntimeException("Unhandled status: " + status);
+		}
+		FileObject overridden = null;
+		throw new RuntimeException("TODO!");
 	}
 
 	public boolean isNewerThan(final long timestamp) {

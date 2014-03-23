@@ -159,33 +159,11 @@ public class FilesCollection extends LinkedHashMap<String, FileObject>
 	}
 
 	public void removeUpdateSite(final String name) {
-		Set<String> toReRead = new HashSet<String>();
 		for (final FileObject file : forUpdateSite(name)) {
-			toReRead.addAll(file.overriddenUpdateSites.keySet());
-			switch (file.getStatus()) {
-			case NEW:
-			case NOT_INSTALLED:
-			case OBSOLETE_UNINSTALLED:
-				remove(file);
-				break;
-			case LOCAL_ONLY:
-				error;
-				break;
-			case MODIFIED:
-			case OBSOLETE:
-			case OBSOLETE_MODIFIED:
-			case UPDATEABLE:
-			case INSTALLED:
-				file.stopOverriding(file.updateSite);
-				break;
-			}
+			file.removeFromUpdateSite(name, this);
 		}
 		updateSites.remove(name);
 		setUpdateSitesChanged(true);
-
-		// re-read the overridden sites
-		// no need to sort, the XMLFileReader will only override data from higher-ranked sites
-		new XMLFileDownloader(this, toReRead).start();
 
 		// update rank
 		int counter = 1;

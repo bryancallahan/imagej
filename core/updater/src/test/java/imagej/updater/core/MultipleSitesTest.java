@@ -36,6 +36,8 @@ import static imagej.updater.core.UpdaterTestUtils.cleanup;
 import static imagej.updater.core.UpdaterTestUtils.initialize;
 import static imagej.updater.core.UpdaterTestUtils.main;
 import static imagej.updater.core.UpdaterTestUtils.writeFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 
@@ -59,7 +61,41 @@ public class MultipleSitesTest {
 	}
 
 	@Test
-	public void testUploadCompleteSite() throws Exception {
+	public void testThreeSites() throws Exception {
+		final String macro = "macros/macro.ijm";
+		files = initialize(macro);
+
+		final String check1 = files.get(macro).getChecksum();
+
+		File ijRoot = files.prefix("");
+		writeFile(new File(ijRoot, macro), "Egads!");
+		addUpdateSite(files, "second");
+		files = main(files, "upload", "--force-shadow", "--update-site", "second", macro);
+		final String check2 = files.get(macro).getChecksum();
+
+		writeFile(new File(ijRoot, macro), "Narf!");
+		addUpdateSite(files, "third");
+		files = main(files, "upload", "--force-shadow", "--update-site", "third", macro);
+		final String check3 = files.get(macro).getChecksum();
+
+		assertCount(1, files);
+		assertEquals(check3, files.get(macro).getChecksum());
+
+		files.removeUpdateSite("third");
+		assertCount(1, files);
+		assertEquals(check2, files.get(macro).getChecksum());
+
+		files.removeUpdateSite("second");
+		assertCount(1, files);
+		assertEquals(check1, files.get(macro).getChecksum());
+
+		files.removeUpdateSite(FilesCollection.DEFAULT_UPDATE_SITE);
+		assertCount(0, files);
+		assertNull(files.get(macro));
+	}
+
+	//@Test
+	public void testThreeSites2() throws Exception {
 		final String installed = "macros/installed.ijm";
 		final String shadowed = "macros/shadowed.ijm";
 		files = initialize(shadowed, installed);
