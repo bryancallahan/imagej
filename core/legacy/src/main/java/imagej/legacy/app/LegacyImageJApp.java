@@ -41,7 +41,7 @@ import org.scijava.plugin.Plugin;
 
 /**
  * An extension of {@link ImageJApp} that provides the legacy ImageJ 1.x
- * version (in paretheses) in addition to the regular ImageJ version, when
+ * version (in parentheses) in addition to the regular ImageJ version, when
  * {@link #getVersion()} is called.
  * 
  * @author Curtis Rueden
